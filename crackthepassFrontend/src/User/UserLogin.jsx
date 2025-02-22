@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AdminBackground from "../assets/AdminBackground.png"; // Same background image
+import AdminBackground from "../assets/AdminBackground.png"; // Background image
 
 function UserLogin() {
   const navigate = useNavigate();
   const [idno, setIdno] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sessionActive, setSessionActive] = useState(null);
+
+  useEffect(() => {
+    const checkSessionStatus = async () => {
+      try {
+        const { data } = await axios.get("http://localhost:5000/api/session/status");
+        setSessionActive(data.isActive);
+      } catch (error) {
+        console.error("Error fetching session status:", error);
+        setSessionActive(false); // Assume session is inactive on error
+      }
+    };
+    checkSessionStatus();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,6 +45,26 @@ function UserLogin() {
       setLoading(false);
     }
   };
+
+  if (sessionActive === null) {
+    return <div className="text-center text-white text-lg">Checking session status...</div>;
+  }
+
+  if (!sessionActive) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center bg-cover bg-center px-4 sm:px-6"
+        style={{ backgroundImage: `url(${AdminBackground})` }}
+      >
+        <div className="bg-black/30 backdrop-blur-lg border border-white/20 shadow-xl p-8 rounded-lg max-w-md w-full text-white text-center">
+          <h2 className="text-3xl font-bold">Session Over</h2>
+          <p className="text-lg mt-4">
+            "You have been eliminated. Better luck next time."
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

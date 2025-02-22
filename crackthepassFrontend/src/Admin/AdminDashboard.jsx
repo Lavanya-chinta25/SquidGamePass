@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Session from "./Session";
 
 function AdminDashboard() {
   const navigate = useNavigate();
@@ -86,7 +87,7 @@ function AdminDashboard() {
   return (
 <div className="min-h-screen flex flex-col items-center justify-center p-4 text-white bg-black backdrop-blur-lg">
     <h1 className="text-3xl sm:text-4xl font-bold mb-6">Squid Game Pass Keys</h1>
-
+      <Session adminToken={adminToken} />
       <div className="bg-white/10 border border-white/20 backdrop-blur-lg p-6 rounded-lg shadow-xl shadow-black/40 w-full max-w-lg">
       {/* Search Input */}
         <input
